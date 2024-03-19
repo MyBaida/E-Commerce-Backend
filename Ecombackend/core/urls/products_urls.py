@@ -8,6 +8,7 @@ urlpatterns = [
 
     path('upload/', uploadImage, name='image-upload'),
 
+    path('top/', getTopProducts, name='top-products'),
     path('<str:pk>/', getProduct, name='products'),
 
     path('update/<str:pk>/', updateProduct, name='product-update'),

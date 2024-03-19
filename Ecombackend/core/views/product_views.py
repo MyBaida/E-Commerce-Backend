@@ -4,9 +4,10 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated, IsAdminUser 
 
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+
 from core.models import Product, Category
 from core.serializers import ProductSerializer
-
 
 from rest_framework import status
 
@@ -14,8 +15,42 @@ from rest_framework import status
 
 @api_view(['GET'])
 def getProducts(request):
-    products = Product.objects.all()
+    query = request.query_params.get('keyword')
+    if query == None:
+        query = ''
+
+    products = Product.objects.filter(name__icontains=query).order_by('-createdAt')
+
+    page = request.query_params.get('page')
+    paginator = Paginator(products, 5)
+
+    try:
+        products = paginator.page(page)
+    except PageNotAnInteger:
+        products = paginator.page(1)
+    except EmptyPage:
+        products = paginator.page(paginator.num_pages)
+
+    if page == None:
+        page = 1
+
+    page = int(page)
+
     serializer = ProductSerializer(products, many=True)
+    return Response({'products': serializer.data, 'page': page, 'pages': paginator.num_pages})
+
+
+@api_view(['GET'])
+def getTopProducts(request):
+    products = Product.objects.filter(rating__gte=4).order_by('-rating')[0:5]
+    serializer = ProductSerializer(products, many=True)
+    return Response(serializer.data)
+
+
+@api_view(['GET'])
+def getProduct(request, pk):
+    product = Product.objects.get(_id=pk)
+    serializer = ProductSerializer(product, many=False)
     return Response(serializer.data)
 
 
@@ -51,22 +86,13 @@ def updateProduct(request, pk):
     category_name = data.get('category_name', None)
     if category_name:
         try:
-            # Check if the provided category ID exists
             category = Category.objects.get(name=category_name)
             product.category = category
         except Category.DoesNotExist:
-            # Handle the case where the category ID provided does not exist
-            return Response({'error': 'Category does not exist'}, status=400)
+            return Response({'error': 'Category does not exist'}, status=status.HTTP_400_BAD_REQUEST)
 
     product.save()
 
-    serializer = ProductSerializer(product, many=False)
-    return Response(serializer.data)
-
-
-@api_view(['GET'])
-def getProduct(request, pk):
-    product = Product.objects.get(_id=pk)
     serializer = ProductSerializer(product, many=False)
     return Response(serializer.data)
 
@@ -80,13 +106,13 @@ def deleteProduct(request, pk):
 
 
 @api_view(['POST'])
-@permission_classes([IsAdminUser])
 def uploadImage(request):
     data = request.data
-    product_id = data['product_id']
 
+    product_id = data['product_id']
     product = Product.objects.get(_id=product_id)
-    product.image = request.Files.get('image')
+
+    product.image = request.FILES.get('image')
 
     product.save()
     return Response('Image was uploaded')
