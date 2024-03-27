@@ -17,6 +17,12 @@ def getCategories(request):
     serializer = CategorySerializer(categories, many=True)
     return Response(serializer.data)
 
+@api_view(['GET'])
+def getCategory(request, pk):
+    product = Category.objects.get(_id=pk)
+    serializer = CategorySerializer(product, many=False)
+    return Response(serializer.data)
+
 
 @api_view(['POST'])
 @permission_classes([IsAdminUser])

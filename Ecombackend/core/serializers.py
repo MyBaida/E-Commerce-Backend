@@ -38,24 +38,36 @@ class UserSerializerWithToken(UserSerializer):
         return str(token.access_token)
 
 
+class ReviewSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Review
+        fields = '__all__'
+
+
 class ProductSerializer(serializers.ModelSerializer):
-    category_name = serializers.CharField(source='category.name', read_only=True)
+    category = serializers.CharField(source='category.name', read_only=True)
+    reviews = serializers.SerializerMethodField(read_only=True)
     class Meta:
         model = Product
-        fields = [
-            'user', 
-            'name', 
-            'image', 
-            'brand', 
-            'category_name', 
-            'description', 
-            'rating', 
-            'numReviews',
-            'price',
-            'countInStock',
-            'createdAt',
-            '_id',
-            ]
+        fields = '__all__'
+        # [ 
+        #     'user', 
+        #     'name', 
+        #     'image', 
+        #     'brand', 
+        #     'category', 
+        #     'description', 
+        #     'rating', 
+        #     'numReviews',
+        #     'price',
+        #     'countInStock',
+        #     'createdAt',
+        #     '_id',
+        #     ]
+    def get_reviews(self, obj):
+        reviews = obj.review_set.all()
+        serializer = ReviewSerializer(reviews, many=True)
+        return serializer.data
 
 
 class CategorySerializer(serializers.ModelSerializer):

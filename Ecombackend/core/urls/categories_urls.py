@@ -6,6 +6,7 @@ urlpatterns = [
 
     path('create/', createCategory, name='category-create'),
 
+    path('<str:pk>/', getCategory, name='category'),
     path('<str:category_name>/', getCategoryProducts, name='category-products'),
 
     path('update/<str:pk>/', updateCategory, name='category-update'),

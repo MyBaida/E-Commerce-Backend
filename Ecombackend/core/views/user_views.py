@@ -92,6 +92,27 @@ def getUserById(request, pk):
     return Response(serializer.data)
 
 
+# @api_view(['POST'])
+# @permission_classes([IsAdminUser])
+# def createUser(request):
+#     user = request.user
+
+#     try:
+#         user = User.objects.create(
+#             user=user,
+#             username='',
+#             email='user@gmail.com',
+#             name='Sample Name',
+#             isAdmin=False,
+#             # password = make_password(data['password'])
+#         )
+#         serializer = UserSerializerWithToken(user, many=False)
+#         return Response(serializer.data)
+#     except:
+#         message = {'detail': 'User with this email already exists'}
+#         return Response(message, status=status.HTTP_400_BAD_REQUEST)
+
+
 @api_view(['PUT'])
 @permission_classes([IsAuthenticated])
 def updateUser(request, pk):

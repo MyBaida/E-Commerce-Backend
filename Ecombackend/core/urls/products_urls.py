@@ -5,9 +5,9 @@ urlpatterns = [
     path('', getProducts, name='products'),
 
     path('create/', createProduct, name='product-create'),
-
     path('upload/', uploadImage, name='image-upload'),
 
+    path('<str:pk>/reviews/', createProductReview, name='create-review'),
     path('top/', getTopProducts, name='top-products'),
     path('<str:pk>/', getProduct, name='products'),
 
