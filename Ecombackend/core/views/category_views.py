@@ -49,9 +49,9 @@ def updateCategory(request, pk):
 
 
 @api_view(['GET'])
-def getCategoryProducts(request, category_name):
+def getCategoryProducts(request, pk):
     try:
-        category = Category.objects.get(name__iexact=category_name)
+        category = Category.objects.get(_id=pk)
         products = category.product_set.all()
         serializer = ProductSerializer(products, many=True)
         return Response(serializer.data)

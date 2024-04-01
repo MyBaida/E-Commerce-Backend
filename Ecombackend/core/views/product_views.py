@@ -25,7 +25,7 @@ def getProducts(request):
     products = Product.objects.filter(name__icontains=query).order_by('-createdAt')
 
     page = request.query_params.get('page')
-    paginator = Paginator(products, 5)
+    paginator = Paginator(products, 4)
 
     try:
         products = paginator.page(page)
@@ -61,17 +61,19 @@ def getProduct(request, pk):
 @permission_classes([IsAdminUser])
 def createProduct(request):
     user = request.user
+    category = Category.objects.get(name='Electronics')  # Fetching the electronics category
     product = Product.objects.create(
         user=user,
         name='Sample Name',
         price=0,
         brand='Sample Brand',
         countInStock=0,
-        category=None,
+        category=None,  # Setting the category to electronics
         description=''
     )
     serializer = ProductSerializer(product, many=False)
     return Response(serializer.data)
+
 
 
 @api_view(['PUT'])
