@@ -139,7 +139,7 @@ def createProductReview(request, pk):
 
 
     #no rating or 0
-    elif data['rating'] == 0:
+    if data['rating'] == 0:
         content = {'detail': 'Please select a rating'}
         return Response(content, status=status.HTTP_400_BAD_REQUEST)
 

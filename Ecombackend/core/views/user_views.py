@@ -37,6 +37,30 @@ def getUserProfile(request):
     return Response(serializer.data)
 
 
+# @api_view(['PUT'])
+# @permission_classes([IsAuthenticated])
+# def updateUserProfile(request):
+#     user = request.user
+#     serializer = UserSerializerWithToken(user, many=False)
+
+#     data = request.data
+
+#     user.first_name = data['name']
+#     user.username = data['email']
+#     user.email = data['email']
+
+#     if user.password != '':
+#         user.password = make_password(data['password'])
+
+#     user.save()
+
+#     return Response(serializer.data)
+
+
+# from rest_framework.decorators import api_view, permission_classes
+# from rest_framework.permissions import IsAuthenticated
+# from django.contrib.auth.hashers import make_password
+
 @api_view(['PUT'])
 @permission_classes([IsAuthenticated])
 def updateUserProfile(request):
@@ -45,16 +69,19 @@ def updateUserProfile(request):
 
     data = request.data
 
-    user.first_name = data['name']
-    user.username = data['email']
-    user.email = data['email']
+    user.first_name = data.get('name', user.first_name)
+    user.username = data.get('email', user.username)
+    user.email = data.get('email', user.email)
 
-    if user.password != '':
-        user.password = make_password(data['password'])
+   
+    password = data.get('password')
+    if password:
+        user.password = make_password(password)
 
     user.save()
 
     return Response(serializer.data)
+
 
 
 
