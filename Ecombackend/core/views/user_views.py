@@ -37,30 +37,6 @@ def getUserProfile(request):
     return Response(serializer.data)
 
 
-# @api_view(['PUT'])
-# @permission_classes([IsAuthenticated])
-# def updateUserProfile(request):
-#     user = request.user
-#     serializer = UserSerializerWithToken(user, many=False)
-
-#     data = request.data
-
-#     user.first_name = data['name']
-#     user.username = data['email']
-#     user.email = data['email']
-
-#     if user.password != '':
-#         user.password = make_password(data['password'])
-
-#     user.save()
-
-#     return Response(serializer.data)
-
-
-# from rest_framework.decorators import api_view, permission_classes
-# from rest_framework.permissions import IsAuthenticated
-# from django.contrib.auth.hashers import make_password
-
 @api_view(['PUT'])
 @permission_classes([IsAuthenticated])
 def updateUserProfile(request):
@@ -69,18 +45,64 @@ def updateUserProfile(request):
 
     data = request.data
 
-    user.first_name = data.get('name', user.first_name)
-    user.username = data.get('email', user.username)
-    user.email = data.get('email', user.email)
+    user.first_name = data['name']
+    user.username = data['email']
+    user.email = data['email']
 
-   
-    password = data.get('password')
-    if password:
-        user.password = make_password(password)
+    if user.password != '':
+        user.password = make_password(data['password'])
 
     user.save()
 
     return Response(serializer.data)
+
+
+
+# @api_view(['PUT'])
+# @permission_classes([IsAuthenticated])
+# def updateUserProfile(request):
+#     user = request.user
+#     serializer = UserSerializerWithToken(user, many=False)
+
+#     data = request.data
+
+#     user.first_name = data.get('name', user.first_name)
+#     user.username = data.get('email', user.username)
+#     user.email = data.get('email', user.email)
+
+   
+#     password = data.get('password')
+#     if password:
+#         user.password = make_password(password)
+
+#     user.save()
+
+#     return Response(serializer.data)
+
+
+# @api_view(['PUT'])
+# @permission_classes([IsAuthenticated])
+# def updateUserPassword(request):
+#     user = request.user
+    
+#     data = request.data
+#     current_password = data.get('current_password')
+#     new_password = data.get('new_password')
+#     confirm_new_password = data.get('confirm_new_password')
+
+#     if not current_password or not new_password or not confirm_new_password:
+#         return Response({'error': 'Please provide current password, new password, and confirm new password'}, status=400)
+
+#     if not user.check_password(current_password):
+#         return Response({'error': 'Current password is incorrect'}, status=400)
+
+#     if new_password != confirm_new_password:
+#         return Response({'error': 'New password and confirm new password do not match'}, status=400)
+
+#     user.set_password(new_password)
+#     user.save()
+
+#     return Response({'message': 'Password changed successfully'}, status=200)
 
 
 
@@ -119,25 +141,6 @@ def getUserById(request, pk):
     return Response(serializer.data)
 
 
-# @api_view(['POST'])
-# @permission_classes([IsAdminUser])
-# def createUser(request):
-#     user = request.user
-
-#     try:
-#         user = User.objects.create(
-#             user=user,
-#             username='',
-#             email='user@gmail.com',
-#             name='Sample Name',
-#             isAdmin=False,
-#             # password = make_password(data['password'])
-#         )
-#         serializer = UserSerializerWithToken(user, many=False)
-#         return Response(serializer.data)
-#     except:
-#         message = {'detail': 'User with this email already exists'}
-#         return Response(message, status=status.HTTP_400_BAD_REQUEST)
 
 
 @api_view(['PUT'])

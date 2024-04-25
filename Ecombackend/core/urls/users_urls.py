@@ -9,6 +9,7 @@ urlpatterns = [
 
     path('profile/', getUserProfile, name="users-profile"),
     path('profile/update/', updateUserProfile, name="user-profile-update"),
+    path('password/update/', updateUserPassword, name="user-password-update"),
     path('', getUsers, name="users"),
 
     path('<str:pk>/', getUserById, name="user"),
